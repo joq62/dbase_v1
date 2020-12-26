@@ -33,7 +33,7 @@ create(SpecId,ServiceId,ServiceVsn,StartCmd,GitPath)->
 
 read_all() ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE)])),
-    [{ServiceId,ServiceVsn,StartCmd,GitPath}||{?RECORD,ServiceId,ServiceVsn,StartCmd,GitPath}<-Z].
+    [{SpecId,ServiceId,ServiceVsn,StartCmd,GitPath}||{?RECORD,SpecId,ServiceId,ServiceVsn,StartCmd,GitPath}<-Z].
 
 
 
