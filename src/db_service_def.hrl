@@ -1,7 +1,7 @@
 -record(service_def,
 	{
 	 service_id,
-	 vsn,
+	 service_vsn,
 	 start_cmd,
 	 gitpath
 	}).
