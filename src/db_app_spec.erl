@@ -38,7 +38,7 @@ read_all() ->
 read(AppId) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		   X#?RECORD.app_id==AppId])),
-    [{XAppId,XVsn,XServices}||{?RECORD,XAppId,XVsn,XServices}<-Z].
+    [{XAppId,XVsn,XDirectives,XServices}||{?RECORD,XAppId,XVsn,XDirectives,XServices}<-Z].
 
 read(AppId,Vsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
