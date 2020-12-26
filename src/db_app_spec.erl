@@ -19,18 +19,19 @@ create_table(NodeList)->
 				 {disc_copies,NodeList}]),
     mnesia:wait_for_tables([?TABLE], 20000).
 
-create({?MODULE,AppId,Vsn,Services})->
-    create(AppId,Vsn,Services).
-create(AppId,Vsn,Services)->
+create({?MODULE,AppId,Vsn,Directives,Services})->
+    create(AppId,Vsn,Directives,Services).
+create(AppId,Vsn,Directives,Services)->
     Record=#?RECORD{ app_id=AppId,
 		     vsn=Vsn,
+		     directives=Directives,
 		     services=Services},
     F = fun() -> mnesia:write(Record) end,
     mnesia:transaction(F).
 
 read_all() ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE)])),
-    [{AppId,Vsn,Services}||{?RECORD,AppId,Vsn,Services}<-Z].
+    [{AppId,Vsn,Directives,Services}||{?RECORD,AppId,Vsn,Directives,Services}<-Z].
 
 
 
@@ -43,7 +44,7 @@ read(AppId,Vsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.app_id==AppId,
 		     X#?RECORD.vsn==Vsn])),
-    [{XAppId,XVsn,XServices}||{?RECORD,XAppId,XVsn,XServices}<-Z].
+    [{XAppId,XVsn,XDirectives,XServices}||{?RECORD,XAppId,XVsn,XDirectives,XServices}<-Z].
 
 delete(Id,Vsn) ->
 

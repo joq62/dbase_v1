@@ -2,5 +2,6 @@
 	{
 	 app_id,
 	 vsn,
+	 directives,
 	 services
 	}).
