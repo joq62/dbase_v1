@@ -10,10 +10,9 @@
 
 %Start Special 
 
-app_spec(AppId,AppVsn)->
+app_spec(AppId)->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
-		     X#?RECORD.app_id==AppId,
-		     X#?RECORD.app_vsn==AppVsn])),
+		     X#?RECORD.app_id==AppId])),
     [{ServiceId,ServiceVsn,XAppId,XAppVsn,HostId,VmId,Vm}||{?RECORD,ServiceId,ServiceVsn,XAppId,XAppVsn,HostId,VmId,Vm}<-Z].
 
 host(HostId)->
