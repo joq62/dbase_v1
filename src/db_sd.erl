@@ -10,6 +10,17 @@
 
 %Start Special 
 
+app_spec(AppId,AppVsn)->
+    Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
+		     X#?RECORD.app_id==AppId,
+		     X#?RECORD.app_vsn==AppVsn])),
+    [{ServiceId,ServiceVsn,XAppId,XAppVsn,HostId,VmId,Vm}||{?RECORD,ServiceId,ServiceVsn,XAppId,XAppVsn,HostId,VmId,Vm}<-Z].
+
+host(HostId)->
+     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
+		     X#?RECORD.host_id==HostId])),
+    [{ServiceId,ServiceVsn,AppId,AppVsn,XHostId,VmId,Vm}||{?RECORD,ServiceId,ServiceVsn,AppId,AppVsn,XHostId,VmId,Vm}<-Z].
+
 get(ServiceId)->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.service_id==ServiceId])),
