@@ -19,13 +19,15 @@ create_table(NodeList)->
 				 {disc_copies,NodeList}]),
     mnesia:wait_for_tables([?TABLE], 20000).
 
-create({?MODULE,ServiceId,ServiceVsn,StartCmd,GitPath})->
-    create(ServiceId,ServiceVsn,StartCmd,GitPath).
-create(ServiceId,ServiceVsn,StartCmd,GitPath)->
-    Record=#?RECORD{ service_id=ServiceId,
-		     service_vsn=ServiceVsn,
-		     start_cmd=StartCmd,
-		     gitpath=GitPath},
+create({?MODULE,SpecId,ServiceId,ServiceVsn,StartCmd,GitPath})->
+    create(SpecId,ServiceId,ServiceVsn,StartCmd,GitPath).
+create(SpecId,ServiceId,ServiceVsn,StartCmd,GitPath)->
+    Record=#?RECORD{
+		    spec_id=SpecId,
+		    service_id=ServiceId,
+		    service_vsn=ServiceVsn,
+		    start_cmd=StartCmd,
+		    gitpath=GitPath},
     F = fun() -> mnesia:write(Record) end,
     mnesia:transaction(F).
 
@@ -35,36 +37,15 @@ read_all() ->
 
 
 
-read(ServiceId) ->
+read(SpecId) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
-		   X#?RECORD.service_id==ServiceId])),
-    [{XServiceId,ServiceVsn,StartCmd,GitPath}||{?RECORD,XServiceId,ServiceVsn,StartCmd,GitPath}<-Z].
+		   X#?RECORD.spec_id==SpecId])),
+    [{XSpecId,ServiceId,ServiceVsn,StartCmd,GitPath}||{?RECORD,XSpecId,ServiceId,ServiceVsn,StartCmd,GitPath}<-Z].
 
-read(ServiceId,ServiceVsn) ->
-    Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
-		     X#?RECORD.service_id==ServiceId,
-		     X#?RECORD.service_vsn==ServiceVsn])),
-    [{XServiceId,XServiceVsn,StartCmd,GitPath}||{?RECORD,XServiceId,XServiceVsn,StartCmd,GitPath}<-Z].
-
-update(Id,Vsn,NewVsn,NewGitPath) ->
+delete(SpecId) ->
     F = fun() -> 
-		ServiceDef=[X||X<-mnesia:read({?TABLE,Id}),
-			    X#?RECORD.service_id==Id,X#?RECORD.service_vsn==Vsn],
-		case ServiceDef of
-		    []->
-			mnesia:abort(?TABLE);
-		    [S1]->
-			mnesia:delete_object(S1), 
-			mnesia:write(#?RECORD{service_id=Id,service_vsn=NewVsn,gitpath=NewGitPath})
-		end
-	end,
-    mnesia:transaction(F).
-
-delete(Id,Vsn) ->
-
-    F = fun() -> 
-		ServiceDef=[X||X<-mnesia:read({?TABLE,Id}),
-			    X#?RECORD.service_id==Id,X#?RECORD.service_vsn==Vsn],
+		ServiceDef=[X||X<-mnesia:read({?TABLE,SpecId}),
+			    X#?RECORD.spec_id==SpecId],
 		case ServiceDef of
 		    []->
 			mnesia:abort(?TABLE);
