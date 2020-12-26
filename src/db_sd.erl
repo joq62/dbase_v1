@@ -11,15 +11,15 @@
 %Start Special 
 
 get(ServiceId)->
-    X=do(qlc:q([X || X <- mnesia:table(?TABLE),
+    Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.service_id==ServiceId])),
-    [XVm||{?RECORD,_XServiceId,_XVsn,_XHostId,_XVmId,XVm}<-X].
+    [Vm||{?RECORD,_XServiceId,_ServiceVsn,_AppId,_AppVsn,_HostId,_VmId,Vm}<-Z].
 
-get(ServiceId,Vsn) ->
+get(ServiceId,ServiceVsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.service_id==ServiceId,
-		     X#?RECORD.service_vsn==Vsn])),
-    [XVm||{?RECORD,_XServiceId,_XVsn,_XHostId,_XVmId,XVm}<-Z].
+		     X#?RECORD.service_vsn==ServiceVsn])),
+    [Vm||{?RECORD,_XServiceId,_ServiceVsn,_AppId,_AppVsn,_HostId,_VmId,Vm}<-Z].
 
 
 % End Special
@@ -54,9 +54,9 @@ read_all() ->
 
 
 read(ServiceId) ->
-    X=do(qlc:q([X || X <- mnesia:table(?TABLE),
+    Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.service_id==ServiceId])),
-    [{XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}||{?RECORD,XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}<-X].
+    [{XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}||{?RECORD,XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}<-Z].
 
 read(ServiceId,ServiceVsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
