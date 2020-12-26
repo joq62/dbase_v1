@@ -1,9 +1,11 @@
  
 -record(sd,
 	{
-	  service_id,
-	  vsn,
-	  host_id,
-	  vm_id,
-	  vm
+	 service_id,
+	 service_vsn,
+	 app_id,
+	 app_vsn,
+	 host_id,
+	 vm_id,
+	 vm
 	}).

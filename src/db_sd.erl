@@ -18,7 +18,7 @@ get(ServiceId)->
 get(ServiceId,Vsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.service_id==ServiceId,
-		     X#?RECORD.vsn==Vsn])),
+		     X#?RECORD.service_vsn==Vsn])),
     [XVm||{?RECORD,_XServiceId,_XVsn,_XHostId,_XVmId,XVm}<-Z].
 
 
@@ -33,11 +33,13 @@ create_table(NodeList)->
 				 {disc_copies,NodeList}]),
     mnesia:wait_for_tables([?TABLE], 20000).
 
-create({?MODULE,ServiceId,Vsn,HostId,VmId,Vm}) ->
-    create(ServiceId,Vsn,HostId,VmId,Vm).
-create(ServiceId,Vsn,HostId,VmId,Vm) ->
+create({?MODULE,ServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}) ->
+    create(ServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm).
+create(ServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm) ->
     Record=#?RECORD{service_id=ServiceId,
-		    vsn=Vsn,
+		    service_vsn=ServiceVsn,
+		    app_id=AppId,
+		    app_vsn=AppVsn,
 		    host_id=HostId,
 		    vm_id=VmId,
 		    vm=Vm 
@@ -47,26 +49,26 @@ create(ServiceId,Vsn,HostId,VmId,Vm) ->
 
 read_all() ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE)])),
-    [{XServiceId,XVsn,XHostId,XVmId,XVm}||{?RECORD,XServiceId,XVsn,XHostId,XVmId,XVm}<-Z].
+    [{ServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}||{?RECORD,ServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}<-Z].
 
 
 
 read(ServiceId) ->
     X=do(qlc:q([X || X <- mnesia:table(?TABLE),
-		   X#?RECORD.service_id==ServiceId])),
-    [{XServiceId,XVsn,XHostId,XVmId,XVm}||{?RECORD,XServiceId,XVsn,XHostId,XVmId,XVm}<-X].
+		     X#?RECORD.service_id==ServiceId])),
+    [{XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}||{?RECORD,XServiceId,ServiceVsn,AppId,AppVsn,HostId,VmId,Vm}<-X].
 
-read(ServiceId,Vsn) ->
+read(ServiceId,ServiceVsn) ->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
-		   X#?RECORD.service_id==ServiceId,
-		     X#?RECORD.vsn==Vsn])),
-    [{XServiceId,XVsn,XHostId,XVmId,XVm}||{?RECORD,XServiceId,XVsn,XHostId,XVmId,XVm}<-Z].
+		     X#?RECORD.service_id==ServiceId,
+		     X#?RECORD.service_vsn==ServiceVsn])),
+    [{XServiceId,XServiceVsn,AppId,AppVsn,HostId,VmId,Vm}||{?RECORD,XServiceId,XServiceVsn,AppId,AppVsn,HostId,VmId,Vm}<-Z].
 
 delete(Id,Vsn,Vm) ->
     F = fun() -> 
 		ServiceDiscovery=[X||X<-mnesia:read({?TABLE,Id}),
 				     X#?RECORD.service_id==Id,
-				     X#?RECORD.vsn==Vsn,
+				     X#?RECORD.service_vsn==Vsn,
 				     X#?RECORD.vm==Vm],
 		case ServiceDiscovery of
 		    []->
