@@ -10,6 +10,10 @@
 -define(TABLE,app_spec).
 -define(RECORD,app_spec).
 
+all_app_specs()->
+    Z=do(qlc:q([X || X <- mnesia:table(?TABLE)])),
+    [AppId||{?RECORD,AppId,_Vsn,_Directives,_Services}<-Z].
+
 create_table()->
     mnesia:create_table(?TABLE, [{attributes, record_info(fields, ?RECORD)},
 				{type,bag}]),
