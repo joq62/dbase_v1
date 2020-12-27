@@ -10,6 +10,10 @@
 
 %Start Special 
 
+active_apps()->
+    Z=do(qlc:q([X || X <- mnesia:table(?TABLE)])),
+    [AppId||{?RECORD,_ServiceId,_ServiceVsn,AppId,_AppVsn,_HostId,_VmId,_Vm}<-Z].
+
 app_spec(AppId)->
     Z=do(qlc:q([X || X <- mnesia:table(?TABLE),
 		     X#?RECORD.app_id==AppId])),
